@@ -144,15 +144,19 @@ public final class TraceIdContext extends SamplingFlags {
      * <p>Example use:
      * <pre>{@code
      * // Attempt to parse the trace ID or break out if unsuccessful for any reason
-     * if (!builder.parseTraceId(getter, carrier, propagation.traceIdKey)) {
+     * String traceIdString = getter.get(carrier, key);
+     * if (!builder.parseTraceId(traceIdString, propagation.traceIdKey)) {
      *   return TraceContextOrSamplingFlags.EMPTY;
      * }
      * }</pre>
-     **/
-    public final <C, K> boolean parseTraceId(Propagation.Getter<C, K> getter, C carrier, K key) {
-      // Trace ID is mandatory
-      String traceIdString = getter.get(carrier, key);
-      if (traceIdString == null) {
+     *
+     * @param traceIdString the 1-32 character lowerhex string
+     * @param key the name of the propagation field representing the trace ID; only using in logging
+     * @return false if the input is null or malformed
+     */
+    // temporarily package protected until we figure out if this is reusable enough to expose
+    final boolean parseTraceId(String traceIdString, Object key) {
+      if (traceIdString == null) { // Trace ID is mandatory
         maybeLogNull(key);
         return false;
       }
@@ -191,9 +195,9 @@ public final class TraceIdContext extends SamplingFlags {
       if (LOG.isLoggable(Level.FINE)) LOG.fine(key + " was null");
     }
 
-    static <K> void maybeLogNotLowerHex(K key, String traceIdString) {
+    static <K> void maybeLogNotLowerHex(K key, String notLowerHex) {
       if (LOG.isLoggable(Level.FINE)) {
-        LOG.fine(key + ": " + traceIdString + " is not a lower-hex string");
+        LOG.fine(key + ": " + notLowerHex + " is not a lower-hex string");
       }
     }
 

@@ -93,16 +93,14 @@ public class TraceIdContextTest {
 
   static TraceContext.Builder parseGoodTraceID(String traceIdString) {
     TraceContext.Builder builder = TraceContext.newBuilder().spanId(1L);
-    Propagation.Getter<String, String> getter = (c, k) -> traceIdString;
-    assertThat(builder.parseTraceId(getter, "headers", "trace-id"))
+    assertThat(builder.parseTraceId(traceIdString, "trace-id"))
         .isTrue();
     return builder;
   }
 
   void parseBadTraceId(String traceIdString) {
     TraceContext.Builder builder = TraceContext.newBuilder().spanId(1L);
-    Propagation.Getter<String, String> getter = (c, k) -> traceIdString;
-    assertThat(builder.parseTraceId(getter, "headers", "trace-id"))
+    assertThat(builder.parseTraceId(traceIdString, "trace-id"))
         .isFalse();
     assertThat(builder.traceIdHigh).isZero();
     assertThat(builder.traceId).isZero();

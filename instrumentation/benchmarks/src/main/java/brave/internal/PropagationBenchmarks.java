@@ -83,8 +83,9 @@ public class PropagationBenchmarks {
   static final Map<String, String> incomingMalformed = new LinkedHashMap<String, String>() {
     {
       put("x-amzn-trace-id", "Sampled=-;Parent=463ac35%Af6413ad;Root=1-??-abc!#%0123456789123456");
-      put("x-b3-traceid", "1"); // ok
-      put("x-b3-parentspanid", "-"); // not ok
+      put("X-B3-TraceId", "463ac35c9f6413ad48485a3953bb6124"); // ok
+      put("X-B3-SpanId",  "48485a3953bb6124"); // ok
+      put("X-B3-ParentSpanId", "-"); // not ok
     }
   };
 

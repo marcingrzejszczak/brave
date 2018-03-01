@@ -204,7 +204,8 @@ public final class TraceContext extends SamplingFlags {
     }
 
     /** Parses the parent id from the input string. Returns true if the ID was missing or valid. */
-    public final <C, K> boolean parseParentId(Propagation.Getter<C, K> getter, C carrier, K key) {
+    // temporarily package protected until we figure out if this is reusable enough to expose
+    final <C, K> boolean parseParentId(Propagation.Getter<C, K> getter, C carrier, K key) {
       String parentIdString = getter.get(carrier, key);
       if (parentIdString == null) return true; // absent parent is ok
       int length = parentIdString.length();
@@ -218,7 +219,8 @@ public final class TraceContext extends SamplingFlags {
     }
 
     /** Parses the span id from the input string. Returns true if the ID is valid. */
-    public final <C, K> boolean parseSpanId(Propagation.Getter<C, K> getter, C carrier, K key) {
+    // temporarily package protected until we figure out if this is reusable enough to expose
+    final <C, K> boolean parseSpanId(Propagation.Getter<C, K> getter, C carrier, K key) {
       String spanIdString = getter.get(carrier, key);
       if (spanIdString == null) { // Span ID is mandatory
         maybeLogNull(key);

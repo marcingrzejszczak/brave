@@ -113,9 +113,6 @@ public final class B3Propagation<K> implements Propagation<K> {
 
     @Override public TraceContextOrSamplingFlags extract(C carrier) {
       if (carrier == null) throw new NullPointerException("carrier == null");
-
-      TraceContext.Builder result = TraceContext.newBuilder();
-
       // Start by looking at the sampled state as this is used regardless
       // Official sampled value is 1, though some old instrumentation send true
       String sampled = getter.get(carrier, propagation.sampledKey);
@@ -124,15 +121,18 @@ public final class B3Propagation<K> implements Propagation<K> {
           : null;
       boolean debug = "1".equals(getter.get(carrier, propagation.debugKey));
 
+      String traceIdString = getter.get(carrier, propagation.traceIdKey);
       // It is ok to go without a trace ID, if sampling or debug is set
-      if (!result.parseTraceId(getter, carrier, propagation.traceIdKey)) {
+      if (traceIdString == null) {
         return TraceContextOrSamplingFlags.create(
             debug ? SamplingFlags.DEBUG : SamplingFlags.Builder.build(sampledV)
         );
       }
 
-      // Try to parse the span and parent ID into the context
-      if (result.parseSpanId(getter, carrier, propagation.spanIdKey)
+      // Try to parse the trace IDs into the context
+      TraceContext.Builder result = TraceContext.newBuilder();
+      if (result.parseTraceId(traceIdString, propagation.traceIdKey)
+          && result.parseSpanId(getter, carrier, propagation.spanIdKey)
           && result.parseParentId(getter, carrier, propagation.parentSpanIdKey)) {
         return TraceContextOrSamplingFlags.create(result.sampled(sampledV).debug(debug).build());
       }
