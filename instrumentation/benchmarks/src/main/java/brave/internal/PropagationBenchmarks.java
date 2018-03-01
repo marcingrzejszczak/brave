@@ -80,6 +80,14 @@ public class PropagationBenchmarks {
     }
   };
 
+  static final Map<String, String> incomingMalformed = new LinkedHashMap<String, String>() {
+    {
+      put("x-amzn-trace-id", "Sampled=-;Parent=463ac35%Af6413ad;Root=1-??-abc!#%0123456789123456");
+      put("x-b3-traceid", "1"); // ok
+      put("x-b3-parentspanid", "-"); // not ok
+    }
+  };
+
   static final Map<String, String> nothingIncoming = Collections.emptyMap();
 
   Map<String, String> carrier = new LinkedHashMap<>();
@@ -122,6 +130,14 @@ public class PropagationBenchmarks {
 
   @Benchmark public TraceContextOrSamplingFlags extract_aws_nothing() {
     return awsExtractor.extract(nothingIncoming);
+  }
+
+  @Benchmark public TraceContextOrSamplingFlags extract_b3_malformed() {
+    return b3Extractor.extract(incomingMalformed);
+  }
+
+  @Benchmark public TraceContextOrSamplingFlags extract_aws_malformed() {
+    return awsExtractor.extract(incomingMalformed);
   }
 
   @Benchmark public TraceContextOrSamplingFlags extract_awsExtraB3_nothing() {

@@ -80,7 +80,7 @@ public class TraceContextTest {
         .debug(true)
         .build();
 
-    TraceContext objects =  base.toBuilder()
+    TraceContext objects = base.toBuilder()
         .parentId(Long.valueOf(1L))
         .sampled(Boolean.TRUE)
         .debug(Boolean.TRUE)
@@ -95,7 +95,7 @@ public class TraceContextTest {
         .parentId(null)
         .build();
 
-    TraceContext zeros =  base.toBuilder()
+    TraceContext zeros = base.toBuilder()
         .parentId(0L)
         .build();
 

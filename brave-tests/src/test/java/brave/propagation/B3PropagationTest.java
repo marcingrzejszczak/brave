@@ -48,4 +48,15 @@ public class B3PropagationTest extends PropagationTest<String> {
     assertThat(result)
         .isEqualTo(SamplingFlags.NOT_SAMPLED);
   }
+
+  @Test public void extractTraceContext_malformed() {
+    MapEntry mapEntry = new MapEntry();
+    map.put("x-b3-traceid", "1"); // ok
+    map.put("x-b3-parentspanid", "-"); // not ok
+
+    SamplingFlags result = propagation().extractor(mapEntry).extract(map).samplingFlags();
+
+    assertThat(result)
+        .isEqualTo(SamplingFlags.EMPTY);
+  }
 }
